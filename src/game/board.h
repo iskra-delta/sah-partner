@@ -1,5 +1,5 @@
 /*
- * chessboard.h
+ * board.h
  *
  * chessboard rleated functions header
  *
@@ -9,8 +9,8 @@
  * 17.07.2022   tstih
  *
  */
-#ifndef __CHESSBOARD_H__
-#define __CHESSBOARD_H__
+#ifndef __BOARD_H__
+#define __BOARD_H__
 
 /* board dimensions */
 #define BOARD_WIDTH     400
@@ -23,4 +23,4 @@
 
 extern void board_draw(coord x, coord y);
 
-#endif /* __CHESSBOARD_H__ */
+#endif /* __BOARD_H__ */

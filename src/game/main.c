@@ -15,7 +15,8 @@
 
 #include <ugpx.h>
 
-#include <game/chessboard.h>
+#include <game/intro.h>
+#include <game/board.h>
 
 /* ----- main loop --------------------------------------------------------- */
 int main() {
@@ -27,7 +28,13 @@ int main() {
     gcls();
 
     /* draw board */
-    board_draw(0,0);
+    intro_draw();
+
+    /* wait for kbhit */
+    while (!kbhit());
+
+    /* clear screen */
+    gcls();
 
     /* exit graphics mode */
     gexit();
