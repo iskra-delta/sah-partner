@@ -38,6 +38,15 @@ int main() {
     /* clear screen */
     gcls();
 
+    /* draw board */
+    board_draw(16,8);
+
+    /* wait for kbhit */
+    while (!kbhit());
+
+    /* clear screen */
+    gcls();
+
     /* exit graphics mode */
     gexit();
 
