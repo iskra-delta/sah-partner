@@ -7,7 +7,7 @@ all:	$(SUBDIRS)
 
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
-	$(MAKE) -C $@
+	$(MAKE) -C $@ BIN_DIR=$(BIN_DIR) BUILD_DIR=$(BUILD_DIR)
 	
 .PHONY: clean
 clean:

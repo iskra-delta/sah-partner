@@ -29,8 +29,8 @@ export ARFLAGS		=	-rc
 export LD			=	sdcc
 export LDFLAGS		=	-mz80 -Wl -y --code-loc 0x100 \
 						--no-std-crt0 --nostdlib --nostdinc \
-						$(addprefix -L,$(BIN_DIR)) \
-						-lusdcc -lulibc -lugpx -p
+						$(addprefix -L,$(BIN_DIR) $(LIB_DIR)/libsdcc-z80/bin) \
+						-llibsdcc-z80 -lulibc -lugpx -p
 export OBJCOPY		=	sdobjcopy
 export CRT0			=	crt0
 
