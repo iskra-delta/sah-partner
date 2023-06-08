@@ -159,7 +159,7 @@ typedef struct _side
 } side;
 side white, black, *friend, *enemy;
 signed char undo_stack[6 * 1024], *undo_sp;
-int maxdepth = 4;
+int maxdepth = 1;
 /*Look in Search Functions*/
 #define PRESCORE_EQUAL       100
 const int prescore_piece_value[] =
@@ -1359,8 +1359,50 @@ command plague_commands[] =
     { "quit",      cmd_quit},
     { NULL,        cmd_default},
 };
-/*
-int main_alt()
+
+/* CP/M text only print string */
+extern unsigned char bdos(unsigned char fn, unsigned int param);
+#define C_READSTR   10
+#define C_WRITE     2
+void _printstring(const char *s) {
+    /* first write string*/
+    while(*s) { 
+        if (*s=='\n') bdos(C_WRITE,'\r');
+        bdos(C_WRITE,*s++); 
+    }
+}
+
+/* CP/M text only readline */
+char* platform_readline(char *out, unsigned char maxchars) {
+    /* how many characters were read */
+    unsigned char numchars;
+
+    /* allocate required buffer. */
+    char *mem=malloc(maxchars + 2);
+    mem[0]=maxchars; /* limit number of chars */
+    bdos(C_READSTR,(unsigned int)mem); /* read chars from console... */
+
+    /* extract length */
+    numchars=mem[1];
+
+    /* copy buffer to output and zero terminate it! */
+    if (numchars>0) 
+        memcpy(out, &(mem[2]), numchars);
+    out[numchars]=0;
+
+    /* free the buffer */
+    free(mem);
+
+    /* add newline */
+    _printstring("\n");    
+
+    /* and return string */
+    return out;
+}
+
+
+
+int play()
 {
     int cmd;
     char name[128];
@@ -1392,8 +1434,12 @@ int main_alt()
     while (true)
     {
 
-        fflush(stdout);
-        scanf("%s", name);
+        /*fflush(stdout);*/
+
+        /* scanf("%s", name); */
+
+        platform_readline(name,128);
+
         for (cmd = 0; plague_commands[cmd].name != NULL; cmd++)
         {
             if (0 == strcmp(plague_commands[cmd].name, name))
@@ -1422,4 +1468,3 @@ int main_alt()
     
     return 0;
 }
-*/

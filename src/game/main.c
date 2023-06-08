@@ -18,6 +18,8 @@
 #include <game/intro.h>
 #include <game/board.h>
 
+extern void play();
+
 /* ----- main loop --------------------------------------------------------- */
 int main() {
 
@@ -38,6 +40,8 @@ int main() {
 
     /* exit graphics mode */
     gexit();
+
+    play();
 
     /* all well.. */
     return 0;
