@@ -39,7 +39,7 @@ int main() {
     gcls();
 
     /* draw board */
-    board_draw(16,8);
+    board3d_draw();
 
     /* wait for kbhit */
     while (!kbhit());

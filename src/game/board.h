@@ -20,7 +20,10 @@
 #define BOARD_HOR_FAC   5
 #define BOARD_VER_FAC   1
 
+extern void bout;
+extern void bsq;
 
-extern void board_draw(coord x, coord y);
+extern void board2d_draw(coord x, coord y);
+extern void board3d_draw();
 
 #endif /* __BOARD_H__ */
