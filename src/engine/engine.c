@@ -1,40 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
-#include <stdbool.h>
-/*Some useful Macros ,Definitions*/
-#define INF 32000
-#define MAX(a,b) ((a)>(b) ? (a) : (b))
-#define MIN(a,b) ((a)<(b) ? (a) : (b))
-/*Phase of Game*/
-typedef enum
-{
-    END, MID, OPEN
-} STATE;
-/*Board Representation*/
-typedef enum
-{
-    A1, A2, A3, A4, A5, A6, A7, A8,
-    B1, B2, B3, B4, B5, B6, B7, B8,
-    C1, C2, C3, C4, C5, C6, C7, C8,
-    D1, D2, D3, D4, D5, D6, D7, D8,
-    E1, E2, E3, E4, E5, E6, E7, E8,
-    F1, F2, F3, F4, F5, F6, F7, F8,
-    G1, G2, G3, G4, G5, G6, G7, G8,
-    H1, H2, H3, H4, H5, H6, H7, H8,
-    CASTLE, EP, LAST
-} squares;
-/*Pieces*/
-typedef enum
-{
-    EMPTY,
-    WHITE_KING, WHITE_QUEEN, WHITE_ROOK,
-    WHITE_BISHOP, WHITE_KNIGHT, WHITE_PAWN,
-    BLACK_KING, BLACK_QUEEN, BLACK_ROOK,
-    BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN
-} pieces;
-typedef unsigned char byte;
+#include <engine/engine.h>
+
 int pawns_white = 0;
 int pawns_black = 0;
 int bishops_white = 0;
@@ -46,18 +11,25 @@ int all_pieces = 0;
 int queen_black = 0;
 int knights_white = 0;
 int knights_black = 0;
+
 /*Number of Half moves done so far*/
 int ply;
+
+/* Game phase */
+int phase;
+
 /*Whose turn To Move*/
 #define WTM (~ply & 1)
+
 /*Look in Move generation for more about this Castle*/
-byte castle[64];
+uint8_t castle[64];
 #define CASTLE_WHITE_KING  1
 #define CASTLE_WHITE_QUEEN 2
 #define CASTLE_BLACK_KING  4
 #define CASTLE_BLACK_QUEEN 8
+
 /*Initial State of Board */
-byte board[67] =
+uint8_t board[67] =
 {
     WHITE_ROOK,   WHITE_PAWN, EMPTY, EMPTY, EMPTY, EMPTY, BLACK_PAWN, BLACK_ROOK,
     WHITE_KNIGHT, WHITE_PAWN, EMPTY, EMPTY, EMPTY, EMPTY, BLACK_PAWN, BLACK_KNIGHT,
@@ -70,8 +42,9 @@ byte board[67] =
     CASTLE_BLACK_QUEEN | CASTLE_BLACK_KING | CASTLE_WHITE_QUEEN | CASTLE_WHITE_KING,
     EMPTY, 0,
 };
+
 /*For more about this look in atk_slide function*/
-const byte king_dirs[64] =
+const uint8_t king_dirs[64] =
 {
     7,  31,  31,  31,  31,  31,  31,  28,
     199, 255, 255, 255, 255, 255, 255, 124,
@@ -82,7 +55,8 @@ const byte king_dirs[64] =
     199, 255, 255, 255, 255, 255, 255, 124,
     193, 241, 241, 241, 241, 241, 241, 112,
 };
-const byte knight_dirs[64] =
+
+const uint8_t knight_dirs[64] =
 {
     6,  14,  46,  46,  46,  46,  44,  40,
     7,  15,  63,  63,  63,  63,  60,  56,
@@ -93,7 +67,7 @@ const byte knight_dirs[64] =
     67, 195, 243, 243, 243, 243, 240, 176,
     65, 193, 209, 209, 209, 209, 208, 144,
 };
-int phase;
+
 int pawn_value[64] =
 {
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -105,6 +79,7 @@ int pawn_value[64] =
     5, 10, 15, 20, 20, 15, 10, 5,
     0, 0, 0, 0, 0, 0, 0, 0,
 };
+
 int bishop_value[64] =
 {
     -5, -5, -5, -5, -5, -5, -5, -5,
@@ -116,6 +91,7 @@ int bishop_value[64] =
     -5, 10, 5, 10, 10, 5, 10, -5,
     -5, -5, -5, -5, -5, -5, -5, -5,
 };
+
 int knight_value[64] =
 {
     -10, -5, -5, -5, -5, -5, -5, -10,
@@ -127,6 +103,7 @@ int knight_value[64] =
     -5, 0, 0, 3, 3, 0, 0, -5,
     -10, -5, -5, -5, -5, -5, -5, -10,
 };
+
 int king_value_open[64] =
 {
     2, 10, 4, 0, 0, 7, 10, 2,
@@ -138,6 +115,7 @@ int king_value_open[64] =
     -34, -34, -55, -55, -55, -55, -34, -34,
     -55, -55, -89, -89, -89, -89, -55, -55,
 };
+
 int king_value_end[64] =
 {
     -5, -3, -1, 0, 0, -1, -3, -5,
@@ -149,13 +127,14 @@ int king_value_end[64] =
     -3, 5, 5, 5, 5, 5, 5, -3,
     -5, -3, -1, 0, 0, -1, -3, -5,
 };
+
 /*Which Sides Does computer control*/
 int computer[2];
 typedef struct _side
 {
-    byte attack[64];
+    uint8_t attack[64];
     int king;
-    byte pawns[10];
+    uint8_t pawns[10];
 } side;
 side white, black, *friend, *enemy;
 signed char undo_stack[6 * 1024], *undo_sp;
@@ -254,10 +233,10 @@ void reset()
     move_sp = move_stack;
     undo_sp = undo_stack;
 }
-void atk_slide(int sq, byte dirs, side *s)
+void atk_slide(int sq, uint8_t dirs, side *s)
 {
     int to, i;
-    byte dir = 0;
+    uint8_t dir = 0;
     /*dirs contains the directions in which we can move
     piece at the given square given no hurdles*/
     dirs &= king_dirs[sq];
@@ -287,7 +266,7 @@ number of attacks of whites or blacks on it*/
 void compute_attacks()
 {
     int sq, to, pc;
-    byte dir, dirs;
+    uint8_t dir, dirs;
     memset(&white, 0, sizeof (white));
     memset(&black, 0, sizeof (black));
     friend = WTM ? &white : &black;
@@ -535,10 +514,10 @@ void push_pawn_move(int fr, int to)
         push_move(fr, to);
 }
 /*genarate sliding moves*/
-void gen_slides(int fr, byte dirs)
+void gen_slides(int fr, uint8_t dirs)
 {
     int to, i;
-    byte dir = 0;
+    uint8_t dir = 0;
     dirs &= king_dirs[fr];
     for (i = 0; i < 8; i++)
     {
@@ -577,7 +556,7 @@ void generate_moves(unsigned treshold)
 {
     int             fr, to;
     int             pc;
-    byte            dir, dirs;
+    uint8_t            dir, dirs;
     caps = treshold;
     for (fr = 0; fr < 64; fr++)
     {
@@ -1290,7 +1269,7 @@ void print_board()
         printf("%d ", 1 + rank);
         for (file = FILE_A; file <= FILE_H; file++)
             printf(" %c |", PIECE2CHAR(board[SQ(file, rank)]));
-        printf("\n  ---+---+---+---+---+---+---+---+\n");
+        printf("\n  ---+---+---+---+---+---+---+---+\n\n");
     }
     printf(" | a | b | c | d | e | f | g | h |\n\n");
 }
@@ -1430,14 +1409,12 @@ int play()
     castle[E8] = CASTLE_BLACK_KING | CASTLE_BLACK_QUEEN;
     castle[H8] = CASTLE_BLACK_KING;
     cmd_new(NULL);
-    
+
+    printf("\n\n");
+    printf("\n\n");
+
     while (true)
     {
-
-        /*fflush(stdout);*/
-
-        /* scanf("%s", name); */
-
         platform_readline(name,128);
 
         for (cmd = 0; plague_commands[cmd].name != NULL; cmd++)
@@ -1454,9 +1431,9 @@ int play()
                 printf("game over: ");
                 compute_attacks();
                 if (!move && enemy->attack[friend->king] != 0)
-                    puts(WTM ? "0-1\n" : "1-0\n");
+                    puts(WTM ? "0-1\n\n" : "1-0\n\n");
                 else
-                    puts("1/2-1/2\n");
+                    puts("1/2-1/2\n\n");
                 computer[0] = 0;
                 computer[1] = 0;
                 break;

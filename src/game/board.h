@@ -20,8 +20,17 @@
 #define BOARD_HOR_FAC   5
 #define BOARD_VER_FAC   1
 
-extern void bout;
-extern void bsq;
+/* board coordinates */
+extern void bout;   /* outline */
+extern void bsq;    /* 8x8 "squares" */
+
+/* masks for figures */
+extern void kingm;
+extern void queenm;
+extern void rookm;
+extern void bishopm;
+extern void knightm;
+extern void pawnm;
 
 extern void board2d_draw(coord x, coord y);
 extern void board3d_draw();
