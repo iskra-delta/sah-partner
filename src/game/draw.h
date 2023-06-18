@@ -31,7 +31,7 @@ extern void fillrect(coord x0, coord y0, coord x1, coord y1);
 extern void filltrap(
     coord x00, coord x01, /* top left and right */
     coord x10, coord x11, /* bottom left and right */
-    coord y0, coord y1);
+    coord y0, coord y1, color c);
 extern void drawtrap(
     coord x00, coord x01, /* top left and right */
     coord x10, coord x11, /* bottom left and right */

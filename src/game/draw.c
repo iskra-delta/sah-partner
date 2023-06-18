@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <game/draw.h>
 
+
 void drawline(coord x0, coord y0, coord x1, coord y1) {
     gdrawline(2*x0,y0,2*x1,y1);
     gdrawline(2*x0+1,y0,2*x1+1,y1);
@@ -52,14 +53,17 @@ static bool _bresenham_next_y(bresenham_t *b) {
 void filltrap(
     coord x00, coord x01, /* top left and right */
     coord x10, coord x11, /* bottom left and right */
-    coord y0, coord y1) {
+    coord y0, coord y1,
+    color c) {
 
     bresenham_t b0, b1;
     _bresenham_init(&b0,x00,y0,x10,y1);
     _bresenham_init(&b1,x01,y0,x11,y1);
+    gsetcolor(c);
     do {
         gdrawline(2*b0.x0,b0.y0,2*b1.x0+1,b1.y0);
     } while (_bresenham_next_y(&b0) && _bresenham_next_y(&b1));
+    gsetcolor(CO_FORE);
 }
 
 void drawtrap(

@@ -157,16 +157,14 @@ s_move move_stack[1024], *move_sp;
 #define PIECE_COLOR(pc) ((pc) < BLACK_KING)
 #define DIR_N (+1)
 #define DIR_E (+8)
-enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
-enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
+
 #define RANK2CHAR(r)            ('1'+(r))
 #define CHAR2RANK(c)            ((c)-'1')
 #define FILE2CHAR(f)            ('a'+(f))
 #define CHAR2FILE(c)            ((c)-'a')
-#define PIECE2CHAR(p)           (" KQRBNPkqrbnp"[p])
+
 #define F(square)               ((square)/(8))
 #define R(square)               ((square)%(8))
-#define SQ(f,r)                 ((f)*(8) + (r))
 #define FLIP(square)            ((square)^7)
 #define MOVE(fr,to)             (((fr) *(64)) + (to))
 #define FR(move)                (((move) & 07700) >> 6)
@@ -1261,18 +1259,7 @@ void print_square(int square)
     putchar(FILE2CHAR(F(square)));
     putchar(RANK2CHAR(R(square)));
 }
-void print_board()
-{
-    int file, rank;
-    for (rank = RANK_8; rank >= RANK_1; rank--)
-    {
-        printf("%d ", 1 + rank);
-        for (file = FILE_A; file <= FILE_H; file++)
-            printf(" %c |", PIECE2CHAR(board[SQ(file, rank)]));
-        printf("\n  ---+---+---+---+---+---+---+---+\n\n");
-    }
-    printf(" | a | b | c | d | e | f | g | h |\n\n");
-}
+
 /*Commands to the engine*/
 void cmd_default(char *s)
 {
@@ -1379,8 +1366,6 @@ char* platform_readline(char *out, unsigned char maxchars) {
     return out;
 }
 
-
-
 int play()
 {
     int cmd;
@@ -1408,6 +1393,9 @@ int play()
     castle[A8] = CASTLE_BLACK_QUEEN;
     castle[E8] = CASTLE_BLACK_KING | CASTLE_BLACK_QUEEN;
     castle[H8] = CASTLE_BLACK_KING;
+
+    init_board();
+
     cmd_new(NULL);
 
     printf("\n\n");

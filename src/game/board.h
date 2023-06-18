@@ -16,15 +16,15 @@
 #define BOARD_WIDTH     400
 #define BOARD_HEIGHT    200
 
-/* bpard reduction factor */
-#define BOARD_HOR_FAC   5
-#define BOARD_VER_FAC   1
+/* board offset */
+#define OFFX(x) (x+70)
+#define OFFY(y) (y+16)
 
 /* board coordinates */
 extern void bout;   /* outline */
-extern void bsq;    /* 8x8 "squares" */
+extern void bsq;    /* board squares */
 
-/* masks for figures */
+/* masks for pieces */
 extern void kingm;
 extern void queenm;
 extern void rookm;
@@ -32,7 +32,12 @@ extern void bishopm;
 extern void knightm;
 extern void pawnm;
 
-extern void board2d_draw(coord x, coord y);
-extern void board3d_draw();
+/* sprites for pieces */
+extern void king;
+extern void queen;
+extern void rook;
+extern void bishop;
+extern void knight;
+extern void pawn;
 
 #endif /* __BOARD_H__ */

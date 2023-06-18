@@ -53,8 +53,21 @@ typedef enum {
     BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN
 } pieces;
 
-/* chess commands */
-extern void cmd_new(char *dummy);   /* new game */
+/* chess matrix */
+enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
+enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
 
+/* convert piece to char */
+#define PIECE2CHAR(p)           (" KQRBNPkqrbnp"[p])
+#define SQ(f,r)                 ((f)*(8) + (r))
+
+/* chess board struct */
+extern uint8_t board[];
+
+/* print the board */
+extern void print_board();
+
+/* initialize board */
+extern void init_board();
 
 #endif /* __ENGINE_H__ */

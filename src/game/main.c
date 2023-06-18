@@ -29,6 +29,8 @@ int main() {
     /* clear screen */
     gcls();
 
+    while (!kbhit());
+
     /* draw board */
     intro_draw();
 
@@ -39,18 +41,13 @@ int main() {
     gcls();
 
     /* draw board */
-    board3d_draw();
-
-    /* wait for kbhit */
-    while (!kbhit());
+    play();
 
     /* clear screen */
     gcls();
 
     /* exit graphics mode */
     gexit();
-
-    play();
 
     /* all well.. */
     return 0;

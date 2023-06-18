@@ -14,7 +14,6 @@
 
 #include <game/intro.h>
 #include <game/draw.h>
-#include <game/util.h>
 #include <game/screen.h>
 
 /* masks for figures */
@@ -25,38 +24,37 @@ extern void bishopm;
 extern void knightm;
 extern void pawnm;
 
+static int _intro_title_draw(char *key, char *text, int x, int y) {
+    
+    dim_t dim; /* font dimensions */
+    void *font=&astro_font;
+    gmetext(font,"CTRL C ",&dim);
+
+    /* now draw */
+    gputtext(font,key,x,y); 
+    gputtext(font,key,x + 1,y);
+    gputtext(font,text,x + dim.w,y);
+
+    return dim.h + TEXT_VPADDING;
+}
+
 void intro_draw() {
+    
     int zoom=3;
     uint16_t *pig = (uint16_t *)&intro_strokes;
     uint16_t len=*pig++;uint16_t width=*pig++;uint16_t height=*pig++;
-    uint16_t x=SCREEN_WIDTH/2 - (width/zoom)/2, y=SCREEN_HEIGHT/2 - (height/zoom)/2 + TEXT_VOFFSET;
-    uint16_t px=*pig++, py=*pig++; len--; /* first point */
+    uint16_t x=SCREEN_WIDTH/2 - (width/zoom)/2, y=SCREEN_HEIGHT/2 - (height/zoom)/2 + CENTER_VOFFSET;
+    uint16_t px=*pig++, py=*pig++; len--;
     while(len--) {
-        drawline(x+px/zoom,y+py/zoom,x+*pig/zoom,y+*(pig+1)/zoom);
+        gdrawline(2*(x+px/zoom),y+py/zoom,2*(x+*pig/zoom),y+*(pig+1)/zoom);
         px=*pig++;py=*pig++;
-        pause(INTRO_LDRAW_PAUSE);
     }
-    /* bottom */
-    int xt=x + TEXT_CENTER_OFFSET, 
-        yt=y + height/zoom + TEXT_VPADDING;
-    gputtext(&bc_font,"1",xt,yt); 
-    gputtext(&bc_font,"1",xt + 1,yt);
-    gputtext(&bc_font,"SVETLE FIGURE",xt + TEXT_KEY_WIDTH,yt);
-
-    gputtext(&bc_font,"2",xt,yt + TEXT_HEIGHT); 
-    gputtext(&bc_font,"2",xt + 1,yt + TEXT_HEIGHT);
-    gputtext(&bc_font,"TEMNE FIGURE",xt + TEXT_KEY_WIDTH,yt + TEXT_HEIGHT);
     
-    gputtext(&bc_font,"Ctrl + C", xt,yt + 2 * TEXT_HEIGHT); 
-    gputtext(&bc_font,"Ctrl + C", xt + 1,yt + 2 * TEXT_HEIGHT);
-    gputtext(&bc_font,"IZHOD", xt + TEXT_KEY_WIDTH,yt + 2 * TEXT_HEIGHT);
-
-    gputglyph(&kingm,0,0);
-    gputglyph(&queenm,45,0);
-    gputglyph(&rookm,2*45,0);
-    gputglyph(&bishopm,3*45,0);
-    gputglyph(&knightm,4*45,0);
-    gputglyph(&pawnm,5*45,0);
-
-
+    /* bottom */
+    int xt=x + CENTER_HOFFSET, 
+        yt=y + height/zoom + TEXT_VPADDING;
+    
+    yt = yt + _intro_title_draw("1", "SVETLE FIGURE", xt, yt);
+    yt = yt + _intro_title_draw("2", "TEMNE FIGURE", xt, yt);
+    yt = yt + _intro_title_draw("CTRL C", "IZHOD", xt, yt);
 }
