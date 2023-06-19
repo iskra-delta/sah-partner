@@ -70,10 +70,4 @@ extern void print_board();
 /* initialize board */
 extern void init_board();
 
-/* enter data on the console */
-extern bool con_input(char *move);
-
-/* the end */
-extern void con_game_over(char *text);
-
 #endif /* __ENGINE_H__ */

@@ -11,6 +11,8 @@
  */
 #include <engine/engine.h>
 
+#pragma disable_warning 196
+
 int pawns_white = 0;
 int pawns_black = 0;
 int bishops_white = 0;
@@ -1281,7 +1283,6 @@ void cmd_default(char *s)
         con_error(NULL);
         make_move(move);
         print_board();
-        con_hist_add(s); /* add move to history */
     }
     else
         con_error("TEGA PA NE ZNAM?");

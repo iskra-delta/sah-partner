@@ -41,10 +41,13 @@ extern void font12x8_font;
 /* initialize console */
 extern void con_init();
 
-/* add move to console history */
-extern void con_hist_add(char *move);
-
 /* display console error */
 extern void con_error(char *msg);
+
+/* enter data on the console */
+extern bool con_input(char *move);
+
+/* the end */
+extern void con_game_over(char *text);
 
 #endif /* __CONSOLE_H__ */

@@ -20,16 +20,6 @@ void con_init() {
     _con_ptr=0; /* initial row is 0 */
 }
 
-static void _con_hist_draw() {
-
-}
-
-void con_hist_add(char *move) {
-    /* add move to console */
-    /* redraw history */
-    _con_hist_draw();
-}
-
 extern void con_error(char *msg) {
     /* clear prev. error */
     rect_t err_rect = RECT_ERROR;
@@ -99,7 +89,6 @@ bool con_input(char *move) {
 
     uint8_t movepos=0,disppos=0; /* points to string terminator */
     move[0]=0;
-    char disp_move[5];
     bool move_done=false;
     int state=0;
     bool redraw=false;
