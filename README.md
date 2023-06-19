@@ -4,7 +4,7 @@
 
 This repository contains the chess software for the Iskra Delta Partner.
 
-![Intro](docs/img/intro.jpg)
+![Chessboard](docs/images//board.png)
 
 ## Compiling
 
@@ -18,9 +18,11 @@ Afterwards, you can find the disk image in the `bin/` directory and the `*.com` 
 
 # Screenshots
 
-![Chess](docs/img/chess1.jpg)
+![Intro](docs/images/intro.png)
 
-![Chess](docs/img/chess2.jpg)
+![Gameplay](docs/images/play.png)
+
+![The End](docs/images/theend.png)
 
 # Credits
 
@@ -35,4 +37,4 @@ Many thanks to **RatinsasPA** for developing [this chess engine](https://github.
 [license.url]:    https://github.com/tstih/idp-quill/blob/main/LICENSE
 [license.badge]:  https://img.shields.io/badge/license-MIT-blue.svg
 
-[status.badge]:  https://img.shields.io/badge/status-alpha-red.svg
+[status.badge]:  https://img.shields.io/badge/status-stable-dkgreen.svg
