@@ -1,3 +1,14 @@
+/*
+ * engine.c
+ *
+ * chess engine
+ *
+ * chess engine by RatinsasPA 
+ * https://github.com/RatinsasPA/chess-engine
+ *
+ * 17.07.2022   tstih
+ *
+ */
 #include <engine/engine.h>
 
 int pawns_white = 0;
@@ -1267,11 +1278,13 @@ void cmd_default(char *s)
     move = parse_move(s);
     if (move)
     {
+        con_error(NULL);
         make_move(move);
         print_board();
+        con_hist_add(s); /* add move to history */
     }
     else
-        printf("no such move or command: %s\n", s);
+        con_error("TEGA PA NE ZNAM?");
 }
 void cmd_both(char *dummy)
 {
@@ -1286,14 +1299,16 @@ void cmd_white(char *dummy)
     computer[1] = 1;
     ply = 0;
     reset();
+    print_board();
 }
 void cmd_black(char *dummy)
 {
     dummy; /* reference arg. */
     computer[0] = 1;
     computer[1] = 0;
-    ply = 1;
+    ply = 0;
     reset();
+    print_board();
 }
 void cmd_force(char *dummy)
 {
@@ -1309,10 +1324,12 @@ void cmd_new(char *dummy)
     computer[0] = 0;
     computer[1] = 1;
 }
+
+static bool exit_game=false;
 void cmd_quit(char *dummy)
 {
     dummy; /* reference arg. */
-    exit(0);
+    exit_game=true;
 }
 command plague_commands[] =
 {
@@ -1366,7 +1383,7 @@ char* platform_readline(char *out, unsigned char maxchars) {
     return out;
 }
 
-int play()
+int play(int black)
 {
     int cmd;
     char name[128];
@@ -1395,15 +1412,22 @@ int play()
     castle[H8] = CASTLE_BLACK_KING;
 
     init_board();
+    con_init();
 
-    cmd_new(NULL);
-
-    printf("\n\n");
-    printf("\n\n");
+    /*cmd_new(NULL);*/
+    if (black) {
+        cmd_black(NULL); 
+        move = root_search(maxdepth);
+        make_move(move);
+        print_board();
+    }
+    else 
+        cmd_white(NULL);
 
     while (true)
     {
-        platform_readline(name,128);
+        if (!con_input(name))
+            break;
 
         for (cmd = 0; plague_commands[cmd].name != NULL; cmd++)
         {
@@ -1411,25 +1435,33 @@ int play()
                 break;
         }
         plague_commands[cmd].cmd(name);
+        if (exit_game) return 1;
         while (computer[!WTM])
         {
             move = root_search(maxdepth);
             if (!move)
             {
-                printf("game over: ");
                 compute_attacks();
                 if (!move && enemy->attack[friend->king] != 0)
-                    puts(WTM ? "0-1\n\n" : "1-0\n\n");
+                    con_game_over(WTM ? "IGRE JE KONEC. ZMAGAL SEM." : "IGRE JE KONEC. ZMAGAL SI.");
                 else
-                    puts("1/2-1/2\n\n");
-                computer[0] = 0;
-                computer[1] = 0;
-                break;
+                    con_game_over("IGRE JE KONEC. REMI.");
+                return 1;
             }
             make_move(move);
             print_board();
+            /* test once again */
+            move = root_search(maxdepth);
+            if (!move)
+            {
+                compute_attacks();
+                if (!move && enemy->attack[friend->king] != 0)
+                    con_game_over(WTM ? "IGRE JE KONEC. ZMAGAL SEM." : "IGRE JE KONEC. ZMAGAL SI.");
+                else
+                    con_game_over("IGRE JE KONEC. REMI.");
+                return 1;
+            }
         }
-    }
-    
+    }    
     return 0;
 }

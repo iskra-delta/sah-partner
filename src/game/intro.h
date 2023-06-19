@@ -15,13 +15,14 @@
 #include <ugpx.h>
 
 #define INTRO_LDRAW_PAUSE   50  /* 400 */
-#define CENTER_HOFFSET      210
+#define CENTER_HOFFSET      200
 #define CENTER_VOFFSET      -35
-#define TEXT_VPADDING       4
+#define TEXT_VPADDING       6
 
 extern void intro_strokes;
 
 extern void astro_font;
+extern void font12x8_font;
 
 extern void intro_draw();
 

@@ -3,9 +3,8 @@
  *
  * chess engine
  *
- * notes: chess engine from https://github.com/RatinsasPA/chess-engine
- * 
- * MIT License (see: LICENSE)
+ * chess engine by RatinsasPA 
+ * https://github.com/RatinsasPA/chess-engine
  *
  * 17.07.2022   tstih
  *
@@ -20,11 +19,12 @@
 #include <limits.h>
 #include <stdbool.h>
 
+#include <game/console.h>
+
 /* some useful macros and definitions */
 #define INF 32000
 #define MAX(a,b) ((a)>(b) ? (a) : (b))
 #define MIN(a,b) ((a)<(b) ? (a) : (b))
-
 
 /*Phase of Game*/
 typedef enum {
@@ -69,5 +69,11 @@ extern void print_board();
 
 /* initialize board */
 extern void init_board();
+
+/* enter data on the console */
+extern bool con_input(char *move);
+
+/* the end */
+extern void con_game_over(char *text);
 
 #endif /* __ENGINE_H__ */

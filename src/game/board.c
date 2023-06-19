@@ -83,6 +83,14 @@ static void _brd_draw_square(int row, int col) {
         OFFY(s[4]),
         OFFY(s[5]),
         whitesq ? CO_FORE : CO_BACK);
+    if (!whitesq)
+        drawtrap(
+            OFFX(s[0]),
+            OFFX(s[1]),
+            OFFX(s[2]),
+            OFFX(s[3]),
+            OFFY(s[4]),
+            OFFY(s[5]));
 }
 
 static void _brd_draw_top(int col) {
@@ -100,6 +108,26 @@ static void _brd_draw_top(int col) {
     gsetcolor(CO_FORE);
     /* and outer line */
     drawline(OFFX(s[0]),OFFY(o[4]),OFFX(s[1]),OFFY(o[4]));
+}
+
+static void _brd_draw_labels() {
+    int* s=_brd_get_trap(RANK_8,FILE_A);
+    char label[2]="A";
+    for(uint8_t i=0;i<=FILE_H;i++) {
+        gputtext(&chess7x6_font,label,OFFX(2*s[3]+((s[3]-s[2])/2)-8),OFFY(s[5]+6));
+        label[0]=label[0] + 1; /* next char */
+        s+=6;
+    }
+    /* manual plaacement */
+    int x=170,y=204;
+    gputtext(&chess7x6_font,"I", x, y); x+=14; y-=26; /* 1 */
+    gputtext(&chess7x6_font,"J", x, y); x+=15; y-=25; /* 2 */
+    gputtext(&chess7x6_font,"K", x, y); x+=12; y-=24; /* 3 */
+    gputtext(&chess7x6_font,"L", x, y); x+=14; y-=24; /* 4 */
+    gputtext(&chess7x6_font,"M", x, y); x+=14; y-=24; /* 5 */
+    gputtext(&chess7x6_font,"N", x, y); x+=15; y-=24; /* 6 */
+    gputtext(&chess7x6_font,"O", x, y); x+=13; y-=23; /* 7 */
+    gputtext(&chess7x6_font,"P", x, y);
 }
 
 static void _brd_colum_dirty(int row, int col) {   
@@ -139,6 +167,8 @@ void print_board() {
     int* o=&bout;
     int* s=&bsq;
     
+    bool labels=false;
+
     /* get dirty fields */
     if (!_init_board) _brd_calc_dirty(); 
     else {
@@ -151,6 +181,7 @@ void print_board() {
             OFFY(o[4]),
             OFFY(o[5]));
         _init_board=false;
+        labels=true;
     }
     
     for(int y=RANK_1;y<=RANK_8;y++)
@@ -168,6 +199,9 @@ void print_board() {
     memcpy(_brd_prev,board,67);
     /* and clean the dirty */
     memset(_brd_dirty,0,67);
+
+    if (labels) _brd_draw_labels();
+
 }
 
 void init_board() {

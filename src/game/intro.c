@@ -16,18 +16,10 @@
 #include <game/draw.h>
 #include <game/screen.h>
 
-/* masks for figures */
-extern void kingm;
-extern void queenm;
-extern void rookm;
-extern void bishopm;
-extern void knightm;
-extern void pawnm;
-
 static int _intro_title_draw(char *key, char *text, int x, int y) {
     
     dim_t dim; /* font dimensions */
-    void *font=&astro_font;
+    void *font=&font12x8_font;
     gmetext(font,"CTRL C ",&dim);
 
     /* now draw */
@@ -52,7 +44,7 @@ void intro_draw() {
     
     /* bottom */
     int xt=x + CENTER_HOFFSET, 
-        yt=y + height/zoom + TEXT_VPADDING;
+        yt=y + height/zoom + 2 * TEXT_VPADDING;
     
     yt = yt + _intro_title_draw("1", "SVETLE FIGURE", xt, yt);
     yt = yt + _intro_title_draw("2", "TEMNE FIGURE", xt, yt);

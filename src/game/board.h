@@ -40,4 +40,7 @@ extern void bishop;
 extern void knight;
 extern void pawn;
 
+/* board labels */
+extern void chess7x6_font;
+
 #endif /* __BOARD_H__ */
